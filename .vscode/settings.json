@@ -1,0 +1,14 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "db_gestore",
+            "database": "db_gestore",
+            "username": "postgres",
+            "password": "postgres"
+        }
+    ]
+}
