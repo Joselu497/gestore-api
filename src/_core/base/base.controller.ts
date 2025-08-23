@@ -1,12 +1,22 @@
-import { Body, Get, Param, Patch, Post, Delete } from '@nestjs/common';
+import {
+  Body,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { BaseService } from './base.service';
 import { DeepPartial, ObjectLiteral } from 'typeorm';
+import { AuthGuard } from '../guards/auth.guard';
 
+@UseGuards(AuthGuard)
 export class BaseController<
   T extends ObjectLiteral,
   TDto extends DeepPartial<T>,
 > {
-  constructor(private readonly service: BaseService<T, TDto>) {}
+  constructor(private readonly service: BaseService<T>) {}
 
   @Get()
   findAll(): Promise<T[]> {
@@ -20,7 +30,7 @@ export class BaseController<
 
   @Post()
   create(@Body() createDto: TDto): Promise<T> {
-    return this.service.create(createDto);
+    return this.service.create(createDto as T);
   }
 
   @Patch(':id')

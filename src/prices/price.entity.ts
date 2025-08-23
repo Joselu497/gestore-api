@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Product } from '../products/product.entity';
 import { Base } from 'src/_core/base/base.entity';
 import { Transaction } from 'src/transactions/transaction.entity';
@@ -14,9 +14,13 @@ export class Price extends Base {
   @Column({ default: true })
   active: boolean;
 
+  @Column({ nullable: false })
+  productId: number;
+
   @ManyToOne(() => Product, (product) => product.prices, {
     onDelete: 'CASCADE',
   })
+  @JoinColumn({ name: 'productId' })
   product: Product;
 
   @OneToMany(() => Transaction, (transaction) => transaction.price)

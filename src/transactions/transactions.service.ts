@@ -3,13 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from 'src/_core/base/base.service';
 import { Transaction } from './transaction.entity';
 import { Repository } from 'typeorm';
-import { TransactionDto } from './transaction.dto';
 
 @Injectable()
-export class TransactionsService extends BaseService<
-  Transaction,
-  TransactionDto
-> {
+export class TransactionsService extends BaseService<Transaction> {
   constructor(
     @InjectRepository(Transaction)
     repository: Repository<Transaction>,

@@ -1,4 +1,4 @@
-import { Entity, Column, OneToMany, ManyToOne } from 'typeorm';
+import { Entity, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { Price } from '../prices/price.entity';
 import { User } from 'src/users/user.entity';
 import { Base } from 'src/_core/base/base.entity';
@@ -11,6 +11,10 @@ export class Product extends Base {
   @OneToMany(() => Price, (price) => price.product)
   prices: Price[];
 
+  @Column({ nullable: false })
+  userId: number;
+
   @ManyToOne(() => User, (user) => user.products)
+  @JoinColumn({ name: 'userId' })
   user: User;
 }

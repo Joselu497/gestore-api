@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
 
-export class BaseService<T extends ObjectLiteral, TDto> {
+export class BaseService<T extends ObjectLiteral> {
   constructor(protected readonly repository: Repository<T>) {}
 
   async findAll(): Promise<T[]> {
@@ -18,8 +18,8 @@ export class BaseService<T extends ObjectLiteral, TDto> {
     return this.repository.findOneBy({ id } as unknown as FindOptionsWhere<T>);
   }
 
-  async create(data: TDto): Promise<T> {
-    const entity = this.repository.create(data as DeepPartial<T>);
+  async create(data: T): Promise<T> {
+    const entity = this.repository.create(data);
     return this.repository.save(entity);
   }
 

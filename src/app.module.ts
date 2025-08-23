@@ -8,6 +8,7 @@ import { ProductsModule } from './products/products.module';
 import { PricesModule } from './prices/prices.module';
 import { dataSourceOptions } from 'db/datasource';
 import { TransactionsModule } from './transactions/transactions.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { TransactionsModule } from './transactions/transactions.module';
     ProductsModule,
     PricesModule,
     TransactionsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
