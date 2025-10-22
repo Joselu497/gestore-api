@@ -5,10 +5,11 @@ import { Price } from './price.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthGuard } from 'src/_core/guards/auth.guard';
 import { AuthModule } from 'src/auth/auth.module';
+import { PriceSubscriber } from './price.subscriber';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Price]), AuthModule],
   controllers: [PricesController],
-  providers: [PricesService, AuthGuard],
+  providers: [PricesService, AuthGuard, PriceSubscriber],
 })
 export class PricesModule {}

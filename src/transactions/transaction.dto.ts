@@ -1,4 +1,4 @@
-import { IsBoolean, IsInt, IsDate, IsNumber, IsEnum } from 'class-validator';
+import { IsInt, IsDate, IsNumber, IsEnum } from 'class-validator';
 import { TransactionType } from 'src/_core/enums/transaction-type.enum';
 
 export class TransactionDto {
@@ -7,9 +7,6 @@ export class TransactionDto {
 
   @IsNumber()
   amount: number;
-
-  @IsBoolean()
-  isAdmin: boolean;
 
   @IsEnum(TransactionType)
   type: TransactionType;

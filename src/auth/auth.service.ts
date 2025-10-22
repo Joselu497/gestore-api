@@ -15,25 +15,34 @@ export class AuthService {
   ) {}
 
   async login(username: string, password: string) {
-    const user = await this.usersRepository.findOne({
-      where: { name: username },
-    });
+    try {
+      const user = await this.usersRepository.findOne({
+        where: { name: username },
+      });
 
-    if (!user) {
-      throw new UnauthorizedException('Usuario no encontrado.');
+      if (!user) {
+        throw new UnauthorizedException('Usuario no encontrado.');
+      }
+
+      if (!user.password) {
+        throw new UnauthorizedException('Credenciales inválidas.');
+      }
+
+      const passwordValid = await bcrypt.compare(password, user.password);
+      if (!passwordValid) {
+        throw new UnauthorizedException('Contraseña incorrecta.');
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password: _password, ...payload } = user;
+
+      return {
+        user: payload,
+        access_token: this.jwtService.sign(payload),
+      };
+    } catch (error: any) {
+      throw new UnauthorizedException(error);
     }
-
-    const passwordValid = await bcrypt.compare(password, user.password);
-    if (!passwordValid) {
-      throw new UnauthorizedException('Contraseña incorrecta.');
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: userPassword, ...payload } = user;
-
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
   }
 
   async validateToken(token: string): Promise<JwtPayload> {

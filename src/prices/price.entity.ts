@@ -1,11 +1,11 @@
 import { Entity, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Product } from '../products/product.entity';
-import { Base } from 'src/_core/base/base.entity';
-import { Transaction } from 'src/transactions/transaction.entity';
+import { Base } from '../_core/base/base.entity';
+import { Transaction } from '../transactions/transaction.entity';
 
 @Entity('prices')
 export class Price extends Base {
-  @Column({ nullable: false })
+  @Column({ type: 'float', nullable: false })
   amount: number;
 
   @Column({ type: 'enum', enum: ['sale', 'purchase'], nullable: false })

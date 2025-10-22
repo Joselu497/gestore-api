@@ -6,9 +6,11 @@ import {
   Post,
   Delete,
   UseGuards,
+  Query,
+  Req,
 } from '@nestjs/common';
 import { BaseService } from './base.service';
-import { DeepPartial, ObjectLiteral } from 'typeorm';
+import { DeepPartial, FindOptionsWhere, ObjectLiteral } from 'typeorm';
 import { AuthGuard } from '../guards/auth.guard';
 
 @UseGuards(AuthGuard)
@@ -19,13 +21,27 @@ export class BaseController<
   constructor(private readonly service: BaseService<T>) {}
 
   @Get()
-  findAll(): Promise<T[]> {
-    return this.service.findAll();
+  findAll(
+    @Query('limit') limit?: number,
+    @Query('page') page?: number,
+    @Query('pagination') pagination?: string,
+    @Req() req?: { where: FindOptionsWhere<T>; relations: string[] },
+  ): Promise<[T[], number] | T[]> {
+    const paginate = pagination !== 'false';
+    const where = req?.where || {};
+    const relations = req?.relations || [];
+
+    return this.service.findAll(limit, page, paginate, where, relations);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<T | null> {
-    return this.service.findOne(+id);
+  findOne(
+    @Param('id') id: string,
+    @Req() req?: { where: FindOptionsWhere<T>; relations: string[] },
+  ): Promise<T | null> {
+    const relations = req?.relations || [];
+
+    return this.service.findOne(+id, relations);
   }
 
   @Post()

@@ -1,5 +1,5 @@
-import { Base } from 'src/_core/base/base.entity';
-import { Product } from 'src/products/product.entity';
+import { Base } from '../_core/base/base.entity';
+import { Product } from '../products/product.entity';
 import { Entity, Column, OneToMany } from 'typeorm';
 
 @Entity('users')

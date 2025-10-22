@@ -7,12 +7,6 @@ export class ProductDto {
   @IsOptional()
   pricesIds?: number[];
 
-  @IsOptional()
-  purchasesIds?: number[];
-
-  @IsOptional()
-  salesIds?: number[];
-
   @IsInt()
   userId: number;
 }

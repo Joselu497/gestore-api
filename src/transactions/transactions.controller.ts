@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { TransactionDto } from './transaction.dto';
 import { Transaction } from './transaction.entity';
@@ -9,7 +9,12 @@ export class TransactionsController extends BaseController<
   Transaction,
   TransactionDto
 > {
-  constructor(service: TransactionsService) {
-    super(service);
+  constructor(private readonly transactionsService: TransactionsService) {
+    super(transactionsService);
+  }
+
+  @Get('total')
+  getTotal(@Query('type') type: 'sale' | 'purchase') {
+    return this.transactionsService.getTotal(type);
   }
 }

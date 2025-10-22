@@ -1,21 +1,40 @@
-// base.service.ts
 import {
   Repository,
   DeepPartial,
   FindOptionsWhere,
   ObjectLiteral,
 } from 'typeorm';
-import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
 
 export class BaseService<T extends ObjectLiteral> {
   constructor(protected readonly repository: Repository<T>) {}
 
-  async findAll(): Promise<T[]> {
+  async findAll(
+    limit?: number,
+    page?: number,
+    paginate?: boolean,
+    where?: FindOptionsWhere<T>,
+    relations?: string[],
+  ): Promise<[T[], number] | T[]> {
+    if (paginate) {
+      const take = limit || 10;
+      const skip = ((page || 1) - 1) * take;
+
+      return this.repository.findAndCount({
+        take,
+        skip,
+        where,
+        relations,
+      });
+    }
+
     return this.repository.find();
   }
 
-  async findOne(id: number): Promise<T | null> {
-    return this.repository.findOneBy({ id } as unknown as FindOptionsWhere<T>);
+  async findOne(id: number, relations?: string[]): Promise<T | null> {
+    return this.repository.findOne({
+      where: { id },
+      relations,
+    } as unknown as FindOptionsWhere<T>);
   }
 
   async create(data: T): Promise<T> {
@@ -24,11 +43,24 @@ export class BaseService<T extends ObjectLiteral> {
   }
 
   async update(id: number, data: DeepPartial<T>): Promise<T> {
-    await this.repository.update(id, data as QueryDeepPartialEntity<T>);
-    return this.findOne(id) as Promise<T>;
+    const existingEntity = await this.repository.findOne({
+      where: { id },
+    } as unknown as FindOptionsWhere<T>);
+
+    if (!existingEntity) {
+      throw new Error(`Entity with id ${id} not found`);
+    }
+
+    const updatedEntity = this.repository.merge(existingEntity, data);
+    return this.repository.save(updatedEntity);
   }
 
   async remove(id: number): Promise<void> {
     await this.repository.delete(id);
+  }
+
+  getAllRelations(): string[] {
+    const metadata = this.repository.metadata;
+    return metadata.relations.map((relation) => relation.propertyName);
   }
 }
