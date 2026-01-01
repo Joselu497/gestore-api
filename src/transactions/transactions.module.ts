@@ -10,5 +10,6 @@ import { AuthModule } from 'src/auth/auth.module';
   imports: [TypeOrmModule.forFeature([Transaction]), AuthModule],
   controllers: [TransactionsController],
   providers: [TransactionsService, AuthGuard],
+  exports: [TypeOrmModule],
 })
 export class TransactionsModule {}

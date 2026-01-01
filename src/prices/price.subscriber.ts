@@ -20,7 +20,6 @@ export class PriceSubscriber implements EntitySubscriberInterface<Price> {
   }
 
   async afterInsert(event: InsertEvent<Price>): Promise<void> {
-    // Verificación explícita de que entity no es undefined
     if (!event.entity) {
       return;
     }
@@ -33,7 +32,6 @@ export class PriceSubscriber implements EntitySubscriberInterface<Price> {
   }
 
   async afterUpdate(event: UpdateEvent<Price>): Promise<void> {
-    // Verificación explícita de que ambas entidades existen
     if (!event.entity || !event.databaseEntity) {
       return;
     }

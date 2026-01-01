@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from 'src/_core/base/base.service';
 import { Transaction } from './transaction.entity';
 import { Repository } from 'typeorm';
+import { transactionsFilter } from './transaction.filter';
 
 @Injectable()
 export class TransactionsService extends BaseService<Transaction> {
@@ -13,9 +14,11 @@ export class TransactionsService extends BaseService<Transaction> {
     super(repository);
   }
 
-  async getTotal(type: 'sale' | 'purchase') {
+  async getTotal(query: object, type: 'sale' | 'purchase') {
+    const where = transactionsFilter(query);
+
     const transactions = await this.repository.find({
-      where: { type },
+      where,
       relations: {
         price: {
           product: {
@@ -28,18 +31,25 @@ export class TransactionsService extends BaseService<Transaction> {
 
     const total = transactions.reduce(
       (acc, transaction) => {
-        const salePrice = transaction.price.product.prices.find(
-          (price) => price.type === 'sale' && price.active,
-        );
-        const purchasePrice = transaction.price.product.prices.find(
-          (price) => price.type === 'purchase' && price.active,
-        );
+        const salePrice =
+          type == 'sale'
+            ? transaction.price.amount
+            : transaction.price.product.prices.find(
+                (price) => price.type === 'sale' && price.active,
+              )?.amount;
+
+        const purchasePrice =
+          type == 'purchase'
+            ? transaction.price.amount
+            : transaction.price.product.prices.find(
+                (price) => price.type === 'purchase' && price.active,
+              )?.amount;
 
         if (salePrice) {
-          acc.totalAmount += salePrice.amount * transaction.amount;
+          acc.totalAmount += salePrice * transaction.amount;
         }
         if (purchasePrice) {
-          acc.totalIncome += purchasePrice.amount * transaction.amount;
+          acc.totalIncome += purchasePrice * transaction.amount;
         }
 
         return acc;

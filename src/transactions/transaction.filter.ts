@@ -6,6 +6,7 @@ interface TransactionQuery {
   type?: 'sale' | 'purchase';
   startDate?: string;
   endDate?: string;
+  productId?: number;
 }
 
 export function transactionsFilter(
@@ -27,6 +28,12 @@ export function transactionsFilter(
       : moment('2100-01-01').endOf('day').toDate();
 
     filter.date = Between(startDate, endDate);
+  }
+
+  if (query.productId) {
+    filter.price = {
+      productId: query.productId,
+    };
   }
 
   return filter;

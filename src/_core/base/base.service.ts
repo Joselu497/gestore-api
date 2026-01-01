@@ -27,7 +27,7 @@ export class BaseService<T extends ObjectLiteral> {
       });
     }
 
-    return this.repository.find();
+    return this.repository.find({ where, relations });
   }
 
   async findOne(id: number, relations?: string[]): Promise<T | null> {
@@ -51,8 +51,9 @@ export class BaseService<T extends ObjectLiteral> {
       throw new Error(`Entity with id ${id} not found`);
     }
 
-    const updatedEntity = this.repository.merge(existingEntity, data);
-    return this.repository.save(updatedEntity);
+    Object.assign(existingEntity, data);
+
+    return await this.repository.save(existingEntity);
   }
 
   async remove(id: number): Promise<void> {

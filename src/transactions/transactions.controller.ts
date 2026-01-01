@@ -14,7 +14,19 @@ export class TransactionsController extends BaseController<
   }
 
   @Get('total')
-  getTotal(@Query('type') type: 'sale' | 'purchase') {
-    return this.transactionsService.getTotal(type);
+  getTotal(
+    @Query('type') type: 'sale' | 'purchase',
+    @Query('startDate') startDate: Date,
+    @Query('endDate') endDate: Date,
+    @Query('productId') productId: number,
+  ) {
+    const query = {
+      type,
+      startDate,
+      endDate,
+      productId,
+    };
+
+    return this.transactionsService.getTotal(query, type);
   }
 }

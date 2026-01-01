@@ -5,9 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Product } from './product.entity';
 import { AuthGuard } from 'src/_core/guards/auth.guard';
 import { AuthModule } from 'src/auth/auth.module';
+import { TransactionsModule } from 'src/transactions/transactions.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Product]), AuthModule],
+  imports: [
+    TypeOrmModule.forFeature([Product]),
+    AuthModule,
+    TransactionsModule,
+  ],
   controllers: [ProductsController],
   providers: [ProductsService, AuthGuard],
 })
