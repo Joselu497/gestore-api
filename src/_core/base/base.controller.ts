@@ -10,7 +10,12 @@ import {
   Req,
 } from '@nestjs/common';
 import { BaseService } from './base.service';
-import { DeepPartial, FindOptionsWhere, ObjectLiteral } from 'typeorm';
+import {
+  DeepPartial,
+  FindOptionsOrder,
+  FindOptionsWhere,
+  ObjectLiteral,
+} from 'typeorm';
 import { AuthGuard } from '../guards/auth.guard';
 
 @UseGuards(AuthGuard)
@@ -25,13 +30,23 @@ export class BaseController<
     @Query('limit') limit?: number,
     @Query('page') page?: number,
     @Query('pagination') pagination?: string,
+    @Query('sort') sort?: string,
     @Req() req?: { where: FindOptionsWhere<T>; relations: string[] },
   ): Promise<[T[], number] | T[]> {
     const paginate = pagination !== 'false';
     const where = req?.where || {};
     const relations = req?.relations || [];
 
-    return this.service.findAll(limit, page, paginate, where, relations);
+    let order: FindOptionsOrder<T> | undefined;
+
+    if (sort) {
+      const [field, direction] = sort.split(':');
+      if (field && (direction === 'ASC' || direction === 'DESC')) {
+        order = { [field]: direction } as unknown as FindOptionsOrder<T>;
+      }
+    }
+
+    return this.service.findAll(limit, page, paginate, where, relations, order);
   }
 
   @Get(':id')

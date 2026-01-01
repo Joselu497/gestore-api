@@ -3,6 +3,7 @@ import {
   DeepPartial,
   FindOptionsWhere,
   ObjectLiteral,
+  FindOptionsOrder,
 } from 'typeorm';
 
 export class BaseService<T extends ObjectLiteral> {
@@ -14,6 +15,7 @@ export class BaseService<T extends ObjectLiteral> {
     paginate?: boolean,
     where?: FindOptionsWhere<T>,
     relations?: string[],
+    order?: FindOptionsOrder<T>,
   ): Promise<[T[], number] | T[]> {
     if (paginate) {
       const take = limit || 10;
@@ -24,10 +26,11 @@ export class BaseService<T extends ObjectLiteral> {
         skip,
         where,
         relations,
+        order,
       });
     }
 
-    return this.repository.find({ where, relations });
+    return this.repository.find({ where, relations, order });
   }
 
   async findOne(id: number, relations?: string[]): Promise<T | null> {
